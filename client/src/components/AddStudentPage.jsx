@@ -3,8 +3,9 @@ import { useHistory } from 'react-router-dom';
 
 import api from '../api/api';
 
-export const RegisterPage = () => {
+export const AddStudentPage = () => {
   const history = useHistory();
+  const isAdmin = history.location.state.isAdmin;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,20 +13,28 @@ export const RegisterPage = () => {
   const registerUser = async (e) => {
     e.preventDefault();
 
-    const response = await api.post('/register', {
-      name,
-      email,
-      password,
-    });
+    const response = await api.post(
+      '/students',
+      {
+        name,
+        email,
+        password,
+      },
+      {
+        headers: {
+          'x-access-token': localStorage.getItem('token'),
+        },
+      }
+    );
 
     const data = await response.data;
     console.log(data);
     if (data.status === 'ok') {
-      alert('Successfully registered');
-      history.push('/login');
+      alert('Successfully Added');
     } else {
       alert('Error: ' + data.error);
     }
+    history.push('/dashboard', { isAdmin });
   };
 
   return (

@@ -1,5 +1,5 @@
 export const LogOutButton = () => {
-  const logout = async () => {
+  const logout = () => {
     localStorage.removeItem('token');
     window.location.href = '/login';
   };

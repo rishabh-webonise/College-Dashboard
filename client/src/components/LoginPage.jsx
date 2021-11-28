@@ -23,7 +23,8 @@ export const LoginPage = () => {
     if (data.status === 'ok') {
       localStorage.setItem('token', data.user);
       alert('Login successful');
-      history.replace('/dashboard', { userType });
+      const isAdmin = userType === 'admin';
+      history.replace('/dashboard', { isAdmin });
     } else {
       alert('Error: ' + data.error);
     }
