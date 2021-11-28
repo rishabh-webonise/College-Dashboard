@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import './App.css';
 import { DashboardPage } from './components/DashboardPage';
 import { LoginPage } from './components/LoginPage';
-import { RegisterPage } from './components/RegisterPage';
 
 function App() {
   return (
@@ -12,10 +11,7 @@ function App() {
         <Router>
           <Switch>
             <Route exact path="/">
-              <Redirect to="/register" />
-            </Route>
-            <Route exact path="/register">
-              <RegisterPage />
+              <Redirect to="/login" />
             </Route>
             <Route exact path="/login">
               <LoginPage />
@@ -29,5 +25,8 @@ function App() {
     </div>
   );
 }
+
+//TODO: /dashboard -> /students GET
+//TODO: /register -> /students POST
 
 export default App;

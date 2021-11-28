@@ -8,6 +8,7 @@ import { LogOutButton } from './LogOutButton';
 export const DashboardPage = () => {
   const history = useHistory();
   const [users, setUsers] = useState({});
+  const userType = history.location.state.userType;
 
   const getInitalData = async () => {
     const response = await api.get('/dashboard', {

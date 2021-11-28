@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const Department = new mongoose.Schema(
+const DeptModel = new mongoose.Schema(
   {
     name: {
       type: 'string',
@@ -18,6 +18,4 @@ const Department = new mongoose.Schema(
   { collection: 'departments' }
 );
 
-const model = mongoose.model('Department', Department);
-
-module.exports = model;
+module.exports = Dept = mongoose.model('Department', DeptModel);
