@@ -36,7 +36,7 @@ module.exports = class UserController {
       const createdUser = await UserService.createUser(user);
       res.json({ status: 'ok', user: createdUser });
     } catch (error) {
-      res.json({ status: 'error', error: 'An account with this email already exists!' });
+      res.json({ status: 'error', error: error.message });
     }
   }
 
@@ -45,10 +45,10 @@ module.exports = class UserController {
       const tokenId = await verifyToken(req.headers['x-access-token']);
       if (tokenId === 'Invalid') throw new Error('Invalid Token!');
       const updatedUser = await UserService.updateUserDepartments(req.params.id, req.body.departments);
-      if (updatedUser.modifiedCount === 0) throw new Error('Unable to update User, error occurred!');
+      if (updatedUser.modifiedCount === 0) throw new Error('No changes made!');
       res.json({ status: 'ok', user: updatedUser });
     } catch (error) {
-      res.json({ status: 'error', error: 'Invalid request' });
+      res.json({ status: 'error', error: error.message });
     }
   }
 

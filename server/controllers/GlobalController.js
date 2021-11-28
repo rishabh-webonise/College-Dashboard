@@ -11,10 +11,10 @@ module.exports = class GlobalController {
       const isUserTypeValid = checkUserType(req.body.userType, user.userType);
       if (!isUserTypeValid) throw new Error('Wrong User Type');
       const token = await signToken(user._id);
-      res.json({ status: 'ok', users: token });
+      res.json({ status: 'ok', user: token });
     } catch (error) {
       console.log(error);
-      res.json({ status: 'error', error: error });
+      res.json({ status: 'error', error: error.message });
     }
   }
 };
