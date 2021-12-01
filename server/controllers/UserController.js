@@ -32,21 +32,9 @@ module.exports = class UserController {
       const tokenId = await verifyToken(req.headers['x-access-token']);
       if (tokenId === 'Invalid') throw new Error('Invalid Token!');
       const user = req.body;
-      user.password = await encryptPassword(req.body.password, 10);
+      user.password = await encryptPassword(req.body.password, 10); //TODO: do this on client side
       const createdUser = await UserService.createUser(user);
       res.json({ status: 'ok', user: createdUser });
-    } catch (error) {
-      res.json({ status: 'error', error: error.message });
-    }
-  }
-
-  static async apiUpdateUserDepartments(req, res, next) {
-    try {
-      const tokenId = await verifyToken(req.headers['x-access-token']);
-      if (tokenId === 'Invalid') throw new Error('Invalid Token!');
-      const updatedUser = await UserService.updateUserDepartments(req.params.id, req.body.departments);
-      if (updatedUser.modifiedCount === 0) throw new Error('No changes made!');
-      res.json({ status: 'ok', user: updatedUser });
     } catch (error) {
       res.json({ status: 'error', error: error.message });
     }
@@ -61,6 +49,17 @@ module.exports = class UserController {
       res.json({ status: 'ok', user: deleteResponse });
     } catch (error) {
       res.json({ status: 'error', error: 'User could not be deleted' });
+    }
+  }
+
+  static async apiGetUsersTable(req, res, next) {
+    try {
+      const tokenId = await verifyToken(req.headers['x-access-token']);
+      if (tokenId === 'Invalid') throw new Error('Invalid Token!');
+      const response = await UserService.getUsersTable();
+      res.json({ status: 'ok', users: response });
+    } catch (error) {
+      res.json({ status: 'error', error: error.message });
     }
   }
 };

@@ -3,15 +3,13 @@ require('dotenv').config(); //FOR ENVIRONMENT VARIABLES
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const User = require('./models/UserModel');
 const Dept = require('./models/DeptModel');
+const UserDeptModel = require('./models/UserDeptModel');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const SECRET_KEY = process.env.SECRET_KEY || 'secret123#';
 mongoose.connect(process.env.MONGOOSE_URI);
 
 // Middlewares
@@ -27,12 +25,31 @@ app.use(logger);
 // Routes
 app.use('/students', require('./routes/userRoute'));
 app.use('/departments', require('./routes/deptRoute'));
+app.use('/userdept', require('./routes/userDeptRoute'));
 app.use('/', require('./routes/globalRoute'));
 
 // For debugging purposes only
-app.get('/debug', async (req, res) => {
+app.get('/debugUsers', async (req, res) => {
   try {
     const userData = await User.find();
+    res.json(userData);
+  } catch (error) {
+    console.log(error);
+    res.send(error.message);
+  }
+});
+app.get('/debugDepts', async (req, res) => {
+  try {
+    const userData = await Dept.find();
+    res.json(userData);
+  } catch (error) {
+    console.log(error);
+    res.send(error.message);
+  }
+});
+app.get('/debug', async (req, res) => {
+  try {
+    const userData = await UserDeptModel.find();
     res.json(userData);
   } catch (error) {
     console.log(error);

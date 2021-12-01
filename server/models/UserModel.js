@@ -19,9 +19,6 @@ const UserModel = new mongoose.Schema(
       type: 'string',
       required: true,
     },
-    departments: {
-      type: 'array',
-    },
   },
   { collection: 'users' }
 );

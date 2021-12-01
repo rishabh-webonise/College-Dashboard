@@ -27,6 +27,18 @@ module.exports = class DeptController {
     }
   }
 
+  static async apiGetDeptByUserId(req, res, next) {
+    try {
+      const tokenId = await verifyToken(req.headers['x-access-token']);
+      if (tokenId === 'Invalid') throw new Error('Invalid Token!');
+      const Dept = await DeptService.getDeptbyUserId(req.params.id);
+      res.json({ status: 'ok', departments: Dept });
+    } catch (error) {
+      console.log(error);
+      res.json({ status: 'error', error: 'Invalid token' });
+    }
+  }
+
   static async apiCreateDept(req, res, next) {
     try {
       const tokenId = await verifyToken(req.headers['x-access-token']);
@@ -38,18 +50,6 @@ module.exports = class DeptController {
     }
   }
 
-  static async apiUpdateDeptStudents(req, res, next) {
-    try {
-      const tokenId = await verifyToken(req.headers['x-access-token']);
-      if (tokenId === 'Invalid') throw new Error('Invalid Token!');
-      const updatedDept = await DeptService.updateDeptStudents(req.params.id, req.body.students);
-      if (updatedDept.modifiedCount === 0) throw new Error('Unable to update Dept, error occurred!');
-      res.json({ status: 'ok', department: updatedDept });
-    } catch (error) {
-      res.json({ status: 'error', error: 'Invalid request' });
-    }
-  }
-
   static async apiDeleteDept(req, res, next) {
     try {
       const tokenId = await verifyToken(req.headers['x-access-token']);
@@ -58,6 +58,17 @@ module.exports = class DeptController {
       res.json({ status: 'ok', department: deleteResponse });
     } catch (error) {
       res.json({ status: 'error', error: 'Dept could not be deleted' });
+    }
+  }
+
+  static async apiGetDeptsTable(req, res, next) {
+    try {
+      const tokenId = await verifyToken(req.headers['x-access-token']);
+      if (tokenId === 'Invalid') throw new Error('Invalid Token!');
+      const response = await DeptService.getDeptsTable();
+      res.json({ status: 'ok', depts: response });
+    } catch (error) {
+      res.json({ status: 'error', error: error.message });
     }
   }
 };

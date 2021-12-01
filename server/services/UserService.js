@@ -1,4 +1,5 @@
 const User = require('../models/UserModel');
+const UserDept = require('../models/UserDeptModel');
 
 module.exports = class UserService {
   static async getAllUsers() {
@@ -7,21 +8,6 @@ module.exports = class UserService {
       return allUsers;
     } catch (error) {
       console.log(`Could not fetch Users ${error}`);
-    }
-  }
-
-  static async createUser(data) {
-    try {
-      const newUser = {
-        userType: data.userType,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      };
-      const response = await new User(newUser).save();
-      return response;
-    } catch (error) {
-      console.log(error);
     }
   }
 
@@ -43,21 +29,78 @@ module.exports = class UserService {
     }
   }
 
-  static async updateUserDepartments(UserId, departments) {
+  static async createUser(data) {
     try {
-      const updateResponse = await User.updateOne({ _id: UserId }, { $set: { departments: departments } });
-      return updateResponse;
+      const newUser = {
+        userType: data.userType,
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      };
+      const response = await new User(newUser).save();
+      return response;
     } catch (error) {
-      console.log(`Could not update User ${error}`);
+      console.log(error);
     }
   }
 
-  static async deleteUser(UserId) {
+  static async deleteUser(userId) {
     try {
-      const deletedResponse = await User.findOneAndDelete({ _id: UserId });
-      return deletedResponse;
+      const res1 = await User.findOneAndDelete({ _id: userId });
+      const res2 = await UserDept.deleteMany({ userId });
+      return [res1, res2];
     } catch (error) {
-      console.log(`Could  ot delete User ${error}`);
+      console.log(`Could not delete User: ${error.message}`);
+    }
+  }
+
+  static async getUsersTable() {
+    try {
+      const userDeptResponse = await User.aggregate([
+        { $match: { userType: 'student' } },
+        {
+          $lookup: {
+            from: 'user_dept',
+            localField: '_id',
+            foreignField: 'userId',
+            as: 'departments',
+          },
+        },
+        {
+          $lookup: {
+            from: 'departments',
+            localField: 'departments.deptId',
+            foreignField: '_id',
+            as: 'departments',
+          },
+        },
+        {
+          $addFields: {
+            departments: {
+              $reduce: {
+                input: '$departments',
+                initialValue: '',
+                in: {
+                  $concat: [
+                    '$$value',
+                    {
+                      $cond: {
+                        if: { $eq: ['$$value', ''] },
+                        then: '',
+                        else: ', ',
+                      },
+                    },
+                    '$$this.name',
+                  ],
+                },
+              },
+            },
+          },
+        },
+      ]);
+      return userDeptResponse;
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
     }
   }
 };

@@ -11,9 +11,6 @@ const DeptModel = new mongoose.Schema(
       type: 'string',
       required: true,
     },
-    students: {
-      type: 'array',
-    },
   },
   { collection: 'departments' }
 );
