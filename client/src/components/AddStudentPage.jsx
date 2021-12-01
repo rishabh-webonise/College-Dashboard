@@ -5,7 +5,13 @@ import api from '../api/api';
 
 export const AddStudentPage = () => {
   const history = useHistory();
-  const isAdmin = history.location.state.isAdmin;
+  let isAdmin = false;
+  try {
+    isAdmin = history.location.state.isAdmin;
+  } catch (e) {
+    alert('Unauthorized access');
+    history.replace('/login');
+  }
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,7 +36,6 @@ export const AddStudentPage = () => {
     const data = await response.data;
     console.log(data);
     if (data.status === 'ok') {
-      alert('Successfully Added');
     } else {
       alert('Error: ' + data.error);
     }

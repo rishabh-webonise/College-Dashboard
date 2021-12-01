@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const DeptRow = ({ dept, isAdmin }) => {
+export const DeptRow = ({ dept, isAdmin, deleteDept }) => {
   return (
     <tr>
       <td>{dept.name}</td>
@@ -9,7 +9,7 @@ export const DeptRow = ({ dept, isAdmin }) => {
       {isAdmin && (
         <td>
           <button onClick={(e) => console.log('Edit')}> Edit </button>
-          <button onClick={(e) => console.log('Delete')}> Delete </button>
+          <button onClick={(e) => deleteDept(dept._id)}> Delete </button>
         </td>
       )}
     </tr>

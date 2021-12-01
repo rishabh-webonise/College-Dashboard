@@ -3,7 +3,13 @@ import { UserRow } from './UserRow';
 
 export const UsersTable = ({ users, deleteUser }) => {
   const history = useHistory();
-  const isAdmin = history.location.state.isAdmin;
+  let isAdmin = false;
+  try {
+    isAdmin = history.location.state.isAdmin;
+  } catch (e) {
+    alert('Unauthorized access');
+    history.replace('/login');
+  }
 
   return (
     <div>

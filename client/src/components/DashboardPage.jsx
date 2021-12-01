@@ -13,7 +13,7 @@ export const DashboardPage = () => {
   const [departments, setDepartments] = useState({});
   const token = localStorage.getItem('token');
 
-  const getAllUsers = async () => {
+  const getUsersTable = async () => {
     const response = await api.get('/students', {
       headers: {
         'x-access-token': token,
@@ -28,7 +28,7 @@ export const DashboardPage = () => {
     }
   };
 
-  const getAllDepartments = async () => {
+  const getDepartmentsTable = async () => {
     const response = await api.get('/departments', {
       headers: {
         'x-access-token': token,
@@ -37,14 +37,14 @@ export const DashboardPage = () => {
     const data = await response.data;
     console.log(data);
     if (data.status === 'ok') {
-      setDepartments(data.departments);
+      setDepartments(data.depts);
     } else {
       alert('Error: ' + data.error);
     }
   };
 
-  const deleteUser = async (UserId) => {
-    const response = await api.delete(`/students/${UserId}`, {
+  const deleteUser = async (userId) => {
+    const response = await api.delete(`/students/${userId}`, {
       headers: {
         'x-access-token': token,
       },
@@ -52,10 +52,24 @@ export const DashboardPage = () => {
     const data = await response.data;
     console.log(data);
     if (data.status === 'ok') {
-      //TODO: Update specific data only
-      getAllUsers();
-      getAllDepartments();
-      alert('User deleted successfully!');
+      getUsersTable();
+      getDepartmentsTable();
+    } else {
+      alert('Error: ' + data.error);
+    }
+  };
+
+  const deleteDept = async (deptId) => {
+    const response = await api.delete(`/departments/${deptId}`, {
+      headers: {
+        'x-access-token': token,
+      },
+    });
+    const data = await response.data;
+    console.log(data);
+    if (data.status === 'ok') {
+      getUsersTable();
+      getDepartmentsTable();
     } else {
       alert('Error: ' + data.error);
     }
@@ -68,8 +82,8 @@ export const DashboardPage = () => {
         localStorage.removeItem('token');
         history.replace('/login');
       } else {
-        getAllUsers();
-        getAllDepartments();
+        getUsersTable();
+        getDepartmentsTable();
       }
     } else {
       history.replace('/login');
@@ -83,7 +97,7 @@ export const DashboardPage = () => {
       <hr />
       <UsersTable users={users} deleteUser={deleteUser} />
       <hr />
-      <DeptTable departments={departments} />
+      <DeptTable departments={departments} deleteDept={deleteDept} />
     </div>
   );
 };

@@ -1,9 +1,15 @@
 import { useHistory } from 'react-router-dom';
 import { DeptRow } from './DeptRow';
 
-export const DeptTable = ({ departments }) => {
+export const DeptTable = ({ departments, deleteDept }) => {
   const history = useHistory();
-  const isAdmin = history.location.state.isAdmin;
+  let isAdmin = false;
+  try {
+    isAdmin = history.location.state.isAdmin;
+  } catch (e) {
+    alert('Unauthorized access');
+    history.replace('/login');
+  }
 
   return (
     <div>
@@ -23,7 +29,7 @@ export const DeptTable = ({ departments }) => {
           </thead>
           <tbody>
             {Object.values(departments).map((element) => (
-              <DeptRow key={element._id} dept={element} isAdmin={isAdmin} />
+              <DeptRow key={element._id} dept={element} isAdmin={isAdmin} deleteDept={deleteDept} />
             ))}
           </tbody>
         </table>

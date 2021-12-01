@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import api from '../api/api';
 
 export const LoginPage = () => {
@@ -22,7 +21,6 @@ export const LoginPage = () => {
     console.log(data);
     if (data.status === 'ok') {
       localStorage.setItem('token', data.user);
-      alert('Login successful');
       const isAdmin = userType === 'admin';
       history.replace('/dashboard', { isAdmin });
     } else {
