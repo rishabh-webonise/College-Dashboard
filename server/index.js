@@ -3,15 +3,14 @@ require('dotenv').config(); //FOR ENVIRONMENT VARIABLES
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const User = require('./models/UserModel');
+const Dept = require('./models/DeptModel');
+const UserDeptModel = require('./models/UserDeptModel');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const SECRET_KEY = process.env.SECRET_KEY || 'secret123#';
-mongoose.connect('mongodb://localhost:27017/minidb');
+mongoose.connect(process.env.MONGOOSE_URI);
 
 // Middlewares
 app.use(cors());
@@ -24,63 +23,33 @@ const logger = (req, res, next) => {
 app.use(logger);
 
 // Routes
-app.post('/register', async (req, res) => {
-  try {
-    const newPassword = await bcrypt.hash(req.body.password, 10);
-    await User.create({
-      userType: req.body.userType,
-      name: req.body.name,
-      email: req.body.email,
-      password: newPassword,
-    });
-    res.json({ status: 'ok' });
-  } catch (err) {
-    res.json({ status: 'error', error: 'An account with this email already exists!' });
-  }
-});
-
-app.post('/login', async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) {
-    return res.json({ status: 'error', error: 'Email not registered!' });
-  }
-  const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
-  if (isPasswordValid) {
-    const token = jwt.sign(
-      {
-        userType: user.userType,
-        name: user.name,
-        email: user.email,
-      },
-      SECRET_KEY
-    );
-    res.json({ status: 'ok', user: token });
-  } else {
-    res.json({ status: 'error', error: 'Wrong password!' });
-  }
-});
-
-app.get('/dashboard', async (req, res) => {
-  const token = req.headers['x-access-token'];
-  try {
-    const decoded = jwt.verify(token, SECRET_KEY);
-    const email = decoded.email;
-    const user = await User.findOne({ email: email });
-    if (!user) {
-      return res.json({ status: 'error', error: 'Invalid token!' });
-    }
-    const userData = await User.find();
-    res.json({ status: 'ok', users: userData });
-  } catch (error) {
-    console.log(error);
-    res.json({ status: 'error', error: 'Invalid token' });
-  }
-});
+app.use('/students', require('./routes/userRoute'));
+app.use('/departments', require('./routes/deptRoute'));
+app.use('/userdept', require('./routes/userDeptRoute'));
+app.use('/', require('./routes/globalRoute'));
 
 // For debugging purposes only
-app.get('/', async (req, res) => {
+app.get('/debugUsers', async (req, res) => {
   try {
     const userData = await User.find();
+    res.json(userData);
+  } catch (error) {
+    console.log(error);
+    res.send(error.message);
+  }
+});
+app.get('/debugDepts', async (req, res) => {
+  try {
+    const userData = await Dept.find();
+    res.json(userData);
+  } catch (error) {
+    console.log(error);
+    res.send(error.message);
+  }
+});
+app.get('/debug', async (req, res) => {
+  try {
+    const userData = await UserDeptModel.find();
     res.json(userData);
   } catch (error) {
     console.log(error);

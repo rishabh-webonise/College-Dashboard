@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const User = new mongoose.Schema(
+const UserModel = new mongoose.Schema(
   {
     userType: {
       type: 'string',
-      required: true,
+      default: 'student',
     },
     name: {
       type: 'string',
@@ -23,6 +23,4 @@ const User = new mongoose.Schema(
   { collection: 'users' }
 );
 
-const model = mongoose.model('User', User);
-
-module.exports = model;
+module.exports = User = mongoose.model('User', UserModel);

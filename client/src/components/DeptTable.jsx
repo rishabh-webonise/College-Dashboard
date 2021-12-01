@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom';
-import { UserRow } from './UserRow';
+import { DeptRow } from './DeptRow';
 
-export const UsersTable = ({ users, deleteUser }) => {
+export const DeptTable = ({ departments, deleteDept }) => {
   const history = useHistory();
   let isAdmin = false;
   try {
@@ -13,24 +13,23 @@ export const UsersTable = ({ users, deleteUser }) => {
 
   return (
     <div>
-      <h2>Students:</h2>
-      {isAdmin && <button onClick={(e) => history.push('/addStudent', { isAdmin })}>Add Student</button>}
-      {!users ? (
-        <p>No users</p>
+      <h2>Departments:</h2>
+      {isAdmin && <button onClick={(e) => history.push('/addDept', { isAdmin })}>Add Department</button>}
+      {!departments ? (
+        <p>No departments</p>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>User Type</th>
               <th>Name</th>
-              <th>Email</th>
-              <th>Departments</th>
+              <th>Dept. Head</th>
+              <th>Students</th>
               {isAdmin && <th>Operations</th>}
             </tr>
           </thead>
           <tbody>
-            {Object.values(users).map((element) => (
-              <UserRow key={element._id} user={element} isAdmin={isAdmin} deleteUser={deleteUser} />
+            {Object.values(departments).map((element) => (
+              <DeptRow key={element._id} dept={element} isAdmin={isAdmin} deleteDept={deleteDept} />
             ))}
           </tbody>
         </table>
